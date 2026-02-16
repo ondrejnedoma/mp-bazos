@@ -2,7 +2,7 @@ const jobId = "extract-prices";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import { promises as fs } from "fs";
+import * as fs from "fs";
 import dotenv from "dotenv";
 import getBazosAds from "@/helpers/getBazosAds";
 import path from "path";
@@ -14,11 +14,11 @@ const extractPrices = async () => {
     setJobStatus(jobId, "running");
     console.log("Extracting prices...");
     const mpData = JSON.parse(
-      await fs.readFile(path.join(process.cwd(), "cache/mp.json"), "utf-8"),
+      fs.readFileSync(path.join(process.cwd(), "cache/mp.json"), "utf-8"),
     );
     const ads = await getBazosAds();
     const previousExtractedPrices = JSON.parse(
-      await fs.readFile(
+      fs.readFileSync(
         path.join(process.cwd(), "cache/extractedPrices.json"),
         "utf-8",
       ),
@@ -69,7 +69,7 @@ const extractPrices = async () => {
       ...previousExtractedPrices,
       ...processedExtractedPrices,
     ];
-    await fs.writeFile(
+    fs.writeFileSync(
       path.join(process.cwd(), "cache/extractedPrices.json"),
       JSON.stringify(updatedExtractedPrices),
     );

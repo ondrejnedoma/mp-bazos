@@ -1,5 +1,5 @@
 const jobId = "update-catalogue";
-import { promises as fs } from "fs";
+import * as fs from "fs";
 import path from "path";
 import { getJobStatus, setJobStatus } from "@/helpers/jobStatusManager";
 
@@ -58,7 +58,7 @@ const updateCatalogue = async () => {
         }
       }
     }
-    await fs.writeFile(
+    fs.writeFileSync(
       path.join(process.cwd(), "cache/mp.json"),
       JSON.stringify(allModels),
     );
