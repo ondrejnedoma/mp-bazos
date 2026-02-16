@@ -11,39 +11,40 @@ const mpData = JSON.parse(
   await fs.readFile(path.join(process.cwd(), "app/mp.json"), "utf-8"),
 );
 
-const phoneStatus = z.object({
+const phoneModel = z.object({
   model: z.enum(mpData.map((item) => item.model)).nullable(),
 });
 
 const extractPrices = async () => {
   console.log("Extracting prices...");
   const ads = await getBazosAds();
-  const allPhoneStatuses = z.object({
-    data: z.array(phoneStatus).length(ads.length),
+  const allPhoneModels = z.object({
+    data: z.array(phoneModel).length(ads.length),
   });
+  const prompt = `${ads.map((el, i) => `LISTING ${i + 1}: ${el.title} ${el.description.replace(/(?:\r\n|\r|\n)+/g, " ")}`).join("\n\n")}`;
+  console.log(prompt);
   const client = new OpenAI();
   const response = await client.responses.parse({
-    model: "gpt-5-mini",
+    model: "gpt-5-nano",
     input: [
       {
         role: "system",
-        content: `Choose the model of each described phone from the enum options you are provided as accurately as possible, if it's not in the enum list or it's not a phone, return null, if the storage capacity is not specified, select the lowest available one for that model.`,
+        content:
+          "Extract offered phone models from marketplace listings, set to null if the detected phone model is not available in the provided enum list or if it's not a phone. If the storage capacity is not specified, select the lowest available one for that model.",
       },
       {
         role: "user",
-        content: `Extract phone information for each ad in the following list of ads:
-
-${ads.map((el, i) => `LISTING ${i + 1}: ${el.title} - ${el.description}`).join("\n\n")}`,
+        content: prompt,
       },
     ],
     text: {
-      format: zodTextFormat(allPhoneStatuses, "event"),
+      format: zodTextFormat(allPhoneModels, "allPhoneModels"),
     },
   });
 
-  const event = response.output_parsed;
-  console.log(event);
-  const processedExtractedPrices = event.data.map((el, i) => {
+  const models = response.output_parsed;
+  console.log(models);
+  const processedExtractedPrices = models.data.map((el, i) => {
     if (el.model === null) {
       return {};
     }

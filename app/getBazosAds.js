@@ -3,20 +3,26 @@ import * as cheerio from "cheerio";
 const bannedKeyworks = [
   "hodinky",
   "tablet",
+  "ipad",
+  "pencil",
+  "airpods",
   "nokia",
+  "aligator",
   "huawei",
   "lenovo",
+  "sony",
   "asus",
   "infinix",
   "LG",
   "apple watch",
   "sběratel",
+  "retro",
   "senior",
 ];
 
 export default async function getBazosAds() {
   let ads = [];
-  for (let i = 0; ads.length < 100; i += 20) {
+  for (let i = 0; ads.length < 10; i += 20) {
     const bazosPageRequest = await fetch("https://mobil.bazos.cz/" + i + "/", {
       next: { revalidate: 300 },
     });
