@@ -13,6 +13,7 @@ const bannedKeyworks = [
   "sony",
   "asus",
   "infinix",
+  "niceboy",
   "LG",
   "apple watch",
   "sběratel",
@@ -31,12 +32,15 @@ export default async function getBazosAds() {
     ads.push(
       ...$(".inzeraty.inzeratyflex")
         .map((i, el) => {
+          const price = $(el).find("div.inzeratycena").text().trim();
+          const priceInt = parseInt(price.split(" ").slice(0, -1).join(""));
           const ad = {
             title: $(el).find("h2.nadpis").text(),
             description: $(el).find("div.popis").text(),
             isTop: $(el).find("span.ztop").text() === "TOP",
             link: "https://mobil.bazos.cz" + $(el).find("a").attr("href"),
-            price: $(el).find("div.inzeratycena").text().trim(),
+            price,
+            priceInt,
             image: $(el).find("img.obrazek").attr("src"),
           };
           const titleAndDescription = (
