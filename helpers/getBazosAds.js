@@ -53,7 +53,8 @@ export default async function getBazosAds() {
             !bannedKeyworks.some((keyword) =>
               titleAndDescription.includes(keyword),
             ) &&
-            ad.image !== "https://www.bazos.cz/obrazky/empty.gif"
+            ad.image !== "https://www.bazos.cz/obrazky/empty.gif" &&
+            ad.priceInt !== 1
           ) {
             return ad;
           }
