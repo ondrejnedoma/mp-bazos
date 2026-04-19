@@ -17,12 +17,13 @@ const extractPrices = async () => {
       fs.readFileSync(path.join(process.cwd(), "cache/mp.json"), "utf-8"),
     );
     const ads = await getBazosAds();
-    const previousExtractedPrices = JSON.parse(
-      fs.readFileSync(
-        path.join(process.cwd(), "cache/extractedPrices.json"),
-        "utf-8",
-      ),
+    const extractedPricesPath = path.join(
+      process.cwd(),
+      "cache/extractedPrices.json",
     );
+    const previousExtractedPrices = fs.existsSync(extractedPricesPath)
+      ? JSON.parse(fs.readFileSync(extractedPricesPath, "utf-8"))
+      : [];
     const filteredAds = ads.filter(
       (ad) => !previousExtractedPrices.some((item) => item.link === ad.link),
     );
